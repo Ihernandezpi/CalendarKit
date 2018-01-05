@@ -2,17 +2,18 @@ import UIKit
 import Neon
 import DateToolsSwift
 
-public protocol TimelineViewDelegate: class {
+
+protocol TimelineViewDelegate: class {
   func timelineView(_ timelineView: TimelineView, didLongPressAt hour: Int)
 }
 
 public class TimelineView: UIView, ReusableView {
 
-  public weak var delegate: TimelineViewDelegate?
+  weak var delegate: TimelineViewDelegate?
 
-  public weak var eventViewDelegate: EventViewDelegate?
+  weak var eventViewDelegate: EventViewDelegate?
 
-  public var date = Date() {
+  var date = Date() {
     didSet {
       setNeedsLayout()
     }
@@ -23,7 +24,7 @@ public class TimelineView: UIView, ReusableView {
   }
 
   var eventViews = [EventView]()
-  public var eventDescriptors = [EventDescriptor]() {
+  var eventDescriptors = [EventDescriptor]() {
     didSet {
       recalculateEventLayout()
       prepareEventViews()
@@ -41,13 +42,13 @@ public class TimelineView: UIView, ReusableView {
 
   var style = TimelineStyle()
 
-  var verticalDiff: CGFloat = 45
+  var verticalDiff: CGFloat = 70
   var verticalInset: CGFloat = 10
   var leftInset: CGFloat = 53
 
   var horizontalEventInset: CGFloat = 3
 
-  public var fullHeight: CGFloat {
+  var fullHeight: CGFloat {
     return verticalInset * 2 + verticalDiff * 24
   }
 
@@ -55,7 +56,7 @@ public class TimelineView: UIView, ReusableView {
     return bounds.width - leftInset
   }
     
-  var is24hClock = true {
+  var is24hClock = false {
     didSet {
       setNeedsDisplay()
     }
@@ -101,7 +102,7 @@ public class TimelineView: UIView, ReusableView {
     addGestureRecognizer(longPressGestureRecognizer)
   }
   
-  @objc func longPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+  func longPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
     if (gestureRecognizer.state == .began) {
       // Get timeslot of gesture location
       let pressedLocation = gestureRecognizer.location(in: self)
@@ -114,19 +115,6 @@ public class TimelineView: UIView, ReusableView {
   public func updateStyle(_ newStyle: TimelineStyle) {
     style = newStyle.copy() as! TimelineStyle
     nowLine.updateStyle(style.timeIndicator)
-    
-    switch style.dateStyle {
-      case .twelveHour:
-        is24hClock = false
-        break
-      case .twentyFourHour:
-        is24hClock = true
-        break
-      default:
-        is24hClock = Locale.autoupdatingCurrent.uses24hClock()
-        break
-    }
-    
     backgroundColor = style.backgroundColor
     setNeedsDisplay()
   }
@@ -145,14 +133,13 @@ public class TimelineView: UIView, ReusableView {
       }
     }
 
-    let mutableParagraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
-    mutableParagraphStyle.lineBreakMode = .byWordWrapping
-    mutableParagraphStyle.alignment = .right
-    let paragraphStyle = mutableParagraphStyle.copy() as! NSParagraphStyle
-    
-    let attributes = [NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                      NSAttributedStringKey.foregroundColor: self.style.timeColor,
-                      NSAttributedStringKey.font: style.font] as [NSAttributedStringKey : Any]
+    let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+    paragraphStyle.lineBreakMode = .byWordWrapping
+    paragraphStyle.alignment = .right
+
+    let attributes = [NSParagraphStyleAttributeName: paragraphStyle,
+                      NSForegroundColorAttributeName: self.style.timeColor,
+                      NSFontAttributeName: style.font] as [String : Any]
 
     for (i, time) in times.enumerated() {
       let iFloat = CGFloat(i)
@@ -249,7 +236,11 @@ public class TimelineView: UIView, ReusableView {
         let floatIndex = CGFloat(index)
         let x = leftInset + floatIndex / totalCount * calendarWidth
         let equalWidth = calendarWidth / totalCount
-        event.frame = CGRect(x: x, y: startY, width: equalWidth, height: endY - startY)
+        var height = endY - startY;
+        if(height < 20){
+            height = 20;
+        }
+        event.frame = CGRect(x: x, y: startY, width: equalWidth, height: height)
       }
     }
   }
