@@ -80,7 +80,7 @@ public class DayView: UIView {
     addSubview(timelinePagerView)
     addSubview(dayHeaderView)
     timelinePagerView.delegate = self
-
+    self.backgroundColor = UIColor.white
     if state == nil {
       state = DayViewState()
     }

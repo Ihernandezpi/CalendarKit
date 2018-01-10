@@ -26,7 +26,7 @@ struct Generator {
 
     var am = numbers.map { $0 + " AM" }
     var pm = numbers.map { $0 + " PM" }
-    am.append("Noon")
+    am.append("12 PM")
     pm.removeFirst()
     pm.append(am.first!)
     return am + pm
