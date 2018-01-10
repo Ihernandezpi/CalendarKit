@@ -63,12 +63,9 @@ public class DayHeaderView: UIView {
     currentWeekdayIndex = centerDaySelector.selectedIndex
   }
   
-  func beginningOfWeek(_ date: Date) -> Date {
-    return calendar.date(from: DateComponents(calendar: calendar,
-                                              weekday: calendar.firstWeekday,
-                                              weekOfYear: date.weekOfYear,
-                                              yearForWeekOfYear: date.yearForWeekOfYear))!
-  }
+    func beginningOfWeek(_ date: Date) -> Date {
+        return calendar.date(from: calendar.dateComponents([ .yearForWeekOfYear, .weekOfYear ], from: date))!
+    }
   
   public func updateStyle(_ newStyle: DayHeaderStyle) {
     style = newStyle.copy() as! DayHeaderStyle
