@@ -4,11 +4,13 @@ import DateToolsSwift
 
 
 protocol TimelineViewDelegate: class {
+  
   func timelineView(_ timelineView: TimelineView, didLongPressAt hour: Int)
 }
 
 public class TimelineView: UIView, ReusableView {
-
+    var dayBlockHours : [String] = [];
+    
   weak var delegate: TimelineViewDelegate?
 
   weak var eventViewDelegate: EventViewDelegate?
@@ -22,7 +24,7 @@ public class TimelineView: UIView, ReusableView {
   var currentTime: Date {
     return Date()
   }
-
+    
   var eventViews = [EventView]()
   var eventDescriptors = [EventDescriptor]() {
     didSet {
@@ -156,7 +158,21 @@ public class TimelineView: UIView, ReusableView {
       context?.addLine(to: CGPoint(x: (bounds).width, y: y))
       context?.strokePath()
       context?.restoreGState()
-
+        
+        //Blocked hours background
+        let formater : DateFormatter = DateFormatter()
+        formater.dateFormat = "hh a"
+        formater.amSymbol = "AM"
+        formater.pmSymbol = "PM"
+        let dateTime : Date = formater.date(from: time)!;
+        
+        for case String(format:"%d",dateTime.hour) in dayBlockHours {
+            context?.addRect(CGRect(x: x, y: y, width: (bounds).width, height: verticalDiff))
+            context?.setFillColor(UIColor(red:0.50, green:0.58, blue:0.60, alpha:0.5).cgColor)
+            context?.setLineWidth(1)
+            context?.fillPath();
+        }
+        
       if i == hourToRemoveIndex { continue }
         
       let fontSize = style.font.pointSize
@@ -283,4 +299,5 @@ public class TimelineView: UIView, ReusableView {
       return hourY + minuteY
     }
   }
+  
 }

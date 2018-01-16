@@ -11,7 +11,7 @@ public protocol TimelinePagerViewDelegate: class {
 }
 
 public class TimelinePagerView: UIView {
-
+  public var daysBlockHours : NSMutableDictionary = NSMutableDictionary()
   public weak var dataSource: EventDataSource?
   public weak var delegate: TimelinePagerViewDelegate?
 
@@ -72,12 +72,12 @@ public class TimelinePagerView: UIView {
   func configureTimelinePager() {
     var verticalScrollViews = [TimelineContainer]()
     for i in -1...1 {
-      let timeline = TimelineView(frame: bounds)
+        let timeline : TimelineView = TimelineView(frame: bounds)
       timeline.delegate = self
       timeline.eventViewDelegate = self
       timeline.frame.size.height = timeline.fullHeight
       timeline.date = Date().add(TimeChunk.dateComponents(days: i))
-
+        
       let verticalScrollView = TimelineContainer(timeline)
       verticalScrollView.addSubview(timeline)
       verticalScrollView.contentSize = timeline.frame.size
@@ -114,6 +114,71 @@ public class TimelinePagerView: UIView {
                          chunk: TimeChunk.dateComponents(days: 1))
     let validEvents = events.filter{$0.datePeriod.overlaps(with: day)}
     timeline.eventDescriptors = validEvents
+    
+    switch timeline.date.weekday{
+    case 1:
+        if let dayVal = daysBlockHours.value(forKey: "d") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    case 2:
+        if let dayVal = daysBlockHours.value(forKey: "l") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    case 3:
+        if let dayVal = daysBlockHours.value(forKey: "m") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    case 4:
+        if let dayVal = daysBlockHours.value(forKey: "mi") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    case 5:
+        if let dayVal = daysBlockHours.value(forKey: "j") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    case 6:
+        if let dayVal = daysBlockHours.value(forKey: "v") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    case 7:
+        if let dayVal = daysBlockHours.value(forKey: "s") {
+            timeline.dayBlockHours = dayVal as! [String]
+            break
+        }else{
+            timeline.dayBlockHours = []
+        }
+        
+    default:
+        timeline.dayBlockHours = []
+        break
+        
+    }
+    timeline.setNeedsDisplay()
+    timeline.reloadInputViews()
   }
 }
 
