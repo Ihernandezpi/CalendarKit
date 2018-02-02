@@ -129,11 +129,11 @@ open class EventView: UIView {
     setNeedsLayout()
   }
 
-  func tap() {
+    @objc func tap() {
     delegate?.eventViewDidTap(self)
   }
 
-  func longPress() {
+    @objc func longPress() {
     delegate?.eventViewDidLongPress(self)
   }
 

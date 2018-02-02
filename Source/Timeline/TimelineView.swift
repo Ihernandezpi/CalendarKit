@@ -2,7 +2,18 @@ import UIKit
 import Neon
 import DateToolsSwift
 
-
+extension Date {
+    func convertToLocalTime(fromTimeZone timeZoneAbbreviation: String) -> Date? {
+        if let timeZone = TimeZone(identifier : timeZoneAbbreviation) {
+            let targetOffset = TimeInterval(timeZone.secondsFromGMT(for: self))
+            let localOffeset = TimeInterval(TimeZone.autoupdatingCurrent.secondsFromGMT(for: self))
+            
+            return self.addingTimeInterval(targetOffset - localOffeset)
+        }
+        
+        return nil
+    }
+}
 protocol TimelineViewDelegate: class {
   
   func timelineView(_ timelineView: TimelineView, didLongPressAt hour: Int)
@@ -104,7 +115,7 @@ public class TimelineView: UIView, ReusableView {
     addGestureRecognizer(longPressGestureRecognizer)
   }
   
-  func longPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+    @objc func longPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
     if (gestureRecognizer.state == .began) {
       // Get timeslot of gesture location
       let pressedLocation = gestureRecognizer.location(in: self)
@@ -139,9 +150,9 @@ public class TimelineView: UIView, ReusableView {
     paragraphStyle.lineBreakMode = .byWordWrapping
     paragraphStyle.alignment = .right
 
-    let attributes = [NSParagraphStyleAttributeName: paragraphStyle,
-                      NSForegroundColorAttributeName: self.style.timeColor,
-                      NSFontAttributeName: style.font] as [String : Any]
+    let attributes : [NSAttributedStringKey : Any] = [NSAttributedStringKey.paragraphStyle: paragraphStyle,
+                      NSAttributedStringKey.foregroundColor: self.style.timeColor,
+                      NSAttributedStringKey.font: style.font]
 
     for (i, time) in times.enumerated() {
       let iFloat = CGFloat(i)
@@ -164,13 +175,13 @@ public class TimelineView: UIView, ReusableView {
         formater.dateFormat = "hh a"
         formater.amSymbol = "AM"
         formater.pmSymbol = "PM"
-        let dateTime : Date = formater.date(from: time)!;
-        
-        for case String(format:"%d",dateTime.hour) in dayBlockHours {
-            context?.addRect(CGRect(x: x, y: y, width: (bounds).width, height: verticalDiff))
-            context?.setFillColor(UIColor(red:0.50, green:0.58, blue:0.60, alpha:0.5).cgColor)
-            context?.setLineWidth(1)
-            context?.fillPath();
+        if let dateTime = formater.date(from: time){
+            for case String(format:"%d",dateTime.hour) in dayBlockHours {
+                context?.addRect(CGRect(x: x, y: y, width: (bounds).width, height: verticalDiff))
+                context?.setFillColor(UIColor(red:0.50, green:0.58, blue:0.60, alpha:0.5).cgColor)
+                context?.setLineWidth(1)
+                context?.fillPath();
+            }
         }
         
       if i == hourToRemoveIndex { continue }
