@@ -113,6 +113,11 @@ public class DayView: UIView {
     dayHeaderView.anchorAndFillEdge(.top, xPad: 0, yPad: 0, otherSize: headerHeight)
     timelinePagerView.alignAndFill(align: .underCentered, relativeTo: dayHeaderView, padding: 0)
   }
+
+  public func transitionToHorizontalSizeClass(_ sizeClass: UIUserInterfaceSizeClass) {
+    dayHeaderView.transitionToHorizontalSizeClass(sizeClass)
+    updateStyle(style)
+  }
 }
 
 extension DayView: EventViewDelegate {

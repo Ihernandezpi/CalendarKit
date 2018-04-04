@@ -179,6 +179,7 @@ public class TimelinePagerView: UIView {
     }
     timeline.setNeedsDisplay()
     timeline.reloadInputViews()
+    timeline.layoutAttributes = validEvents.map(EventLayoutAttributes.init)
   }
 }
 

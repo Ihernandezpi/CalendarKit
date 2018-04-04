@@ -1,7 +1,8 @@
 import UIKit
-import DateToolsSwift
 
 open class Event: EventDescriptor {
+  public var startDate = Date()
+  public var endDate = Date()
   public var status = ""
   public var eventType = ""
   public var billed = false;
@@ -19,7 +20,6 @@ open class Event: EventDescriptor {
   public var backgroundColor = UIColor.blue.withAlphaComponent(0.3)
   public var textColor = UIColor.black
   public var font = UIFont.boldSystemFont(ofSize: 12)
-  public var frame = CGRect.zero
   public var userInfo: Any?
   
   public init() {}
