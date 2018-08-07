@@ -9,4 +9,7 @@ public protocol EventDescriptor {
   var color: UIColor {get}
   var textColor: UIColor {get}
   var backgroundColor: UIColor {get}
+    var status: String{get}
+    var billed: Bool{get}
+    var eventType: String {get}
 }

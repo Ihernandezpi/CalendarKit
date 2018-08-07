@@ -6,7 +6,7 @@ open class Event: EventDescriptor {
   public var status = ""
   public var eventType = ""
   public var billed = false;
-  public var datePeriod = TimePeriod()
+  //public var datePeriod = TimePeriod()
   public var text = ""
   public var attributedText: NSAttributedString?
   public var color = UIColor.blue {

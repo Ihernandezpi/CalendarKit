@@ -37,13 +37,22 @@ public class TimelineView: UIView, ReusableView {
   }
     
   var eventViews = [EventView]()
-  var eventDescriptors = [EventDescriptor]() {
-    didSet {
-      recalculateEventLayout()
-      prepareEventViews()
-      setNeedsLayout()
+//  var eventDescriptors = [EventDescriptor]() {
+//    didSet {
+//      recalculateEventLayout()
+//      prepareEventViews()
+//      setNeedsLayout()
+//    }
+//  }
+    
+    public var layoutAttributes = [EventLayoutAttributes]() {
+        didSet {
+            recalculateEventLayout()
+            prepareEventViews()
+            setNeedsLayout()
+        }
     }
-  }
+    
   var pool = ReusePool<EventView>()
 
   var firstEventYPosition: CGFloat? {
