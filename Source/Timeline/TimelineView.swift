@@ -159,9 +159,9 @@ public class TimelineView: UIView, ReusableView {
     paragraphStyle.lineBreakMode = .byWordWrapping
     paragraphStyle.alignment = .right
 
-    let attributes : [NSAttributedStringKey : Any] = [NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                      NSAttributedStringKey.foregroundColor: self.style.timeColor,
-                      NSAttributedStringKey.font: style.font]
+    let attributes : [NSAttributedString.Key : Any] = [NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                                                       NSAttributedString.Key.foregroundColor: self.style.timeColor,
+                                                       NSAttributedString.Key.font: style.font]
 
     for (i, time) in times.enumerated() {
       let iFloat = CGFloat(i)
@@ -216,7 +216,7 @@ public class TimelineView: UIView, ReusableView {
     if !isToday {
       nowLine.alpha = 0
     } else {
-      bringSubview(toFront: nowLine)
+        bringSubviewToFront(nowLine)
       nowLine.alpha = 1
       let size = CGSize(width: bounds.size.width, height: 20)
       let rect = CGRect(origin: CGPoint.zero, size: size)

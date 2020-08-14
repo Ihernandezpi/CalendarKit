@@ -12,4 +12,6 @@ public protocol EventDescriptor {
     var status: String{get}
     var billed: Bool{get}
     var eventType: String {get}
+    var stripesColors : [UIColor] {get}
+    var videocall: Bool {get}
 }

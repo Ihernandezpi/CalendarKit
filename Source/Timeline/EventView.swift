@@ -26,7 +26,10 @@ open class EventView: UIView {
   weak var delegate: EventViewDelegate?
   public var descriptor: EventDescriptor?
   private var fConsultation = false
+  private var notConfirmed = false
+    private var videocall = false
   public var color = UIColor.lightGray
+  public var stripesColors : [UIColor]?
 
   var contentHeight: CGFloat {
     return textView.height
@@ -37,11 +40,20 @@ open class EventView: UIView {
     view.isUserInteractionEnabled = false
     view.backgroundColor = .clear
     view.isScrollEnabled = false
+    view.textColor = .black
+    view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
   lazy var imageView : UIImageView = {
         var imageView = UIImageView.init();
+    imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView;
+    }()
+    lazy var videoCallImage : UIImageView = {
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "baseline_videocam_black_24pt"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = UIColor(red: 0.52, green: 0.40, blue: 0.92, alpha: 1.00)
+        return imageView
     }()
   lazy var tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tap))
   lazy var longPressGestureRecognizer: UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
@@ -56,6 +68,8 @@ open class EventView: UIView {
     configure()
   }
 
+    var widthVideoCall: NSLayoutConstraint!
+    var marginLeftText: NSLayoutConstraint!
   func configure() {
     clipsToBounds = true
     [tapGestureRecognizer, longPressGestureRecognizer].forEach {addGestureRecognizer($0)}
@@ -63,6 +77,24 @@ open class EventView: UIView {
     color = tintColor
     addSubview(textView)
     addSubview(imageView)
+    addSubview(videoCallImage)
+    
+    self.videoCallImage.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
+    self.videoCallImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 4).isActive = true
+    widthVideoCall = self.videoCallImage.widthAnchor.constraint(equalToConstant: 20)
+    widthVideoCall.isActive = true
+    self.videoCallImage.heightAnchor.constraint(equalToConstant: 20).isActive = true
+    
+    self.imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
+    self.imageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -4).isActive = true
+    self.imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+    self.imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+    
+    self.textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
+    marginLeftText = self.textView.leftAnchor.constraint(equalTo: self.videoCallImage.rightAnchor, constant: 4)
+    marginLeftText.isActive = true
+    self.textView.rightAnchor.constraint(equalTo: self.imageView.leftAnchor, constant: 4).isActive = true
+    self.textView.heightAnchor.constraint(equalToConstant: 30).isActive = true
     
     }
 
@@ -74,20 +106,6 @@ open class EventView: UIView {
       textView.textColor = event.textColor
       textView.font = event.font
     }
-//    if(event.status.elementsEqual("confirmed")){
-//        var image = UIImage.init(named: "c6")!;
-//        imageView.image = image
-//    }else if(event.status.elementsEqual("arrived") && !event.billed){
-//        var image = UIImage.init(named: "c22")!;
-//        imageView.image = image
-//    }else if(event.billed){
-//        var image = UIImage.init(named: "moneysign")!;
-//        imageView.image = image
-//
-//    }else{
-//        imageView.image = nil
-//    }
-    
     if(event.eventType.elementsEqual("fconsultation")){
         fConsultation = true
         var image = UIImage.init(named: "btn_primeraVez")!;
@@ -102,29 +120,36 @@ open class EventView: UIView {
         imageView.image = image
     }else if(event.eventType.elementsEqual("personal")){
         fConsultation = false
-//        var image = UIImage.init(named: "btn_Persc")!;
-//        imageView.image = image
+
         imageView.image = nil
     }
     else if(event.eventType.elementsEqual("vacation")){
         fConsultation = false
-//        var image = UIImage.init(named: "btn_Vacc")!;
-//        imageView.image = image
         imageView.image = nil
     }
     else if(event.eventType.elementsEqual("congress")){
         fConsultation = false
-//        var image = UIImage.init(named: "btn_Conc")!;
-//        imageView.image = image
         imageView.image = nil
     }else{
         imageView.image = nil
         fConsultation = false
     }
-    
+    stripesColors = event.stripesColors
+    color = event.color
     descriptor = event
     backgroundColor = event.backgroundColor
-    color = event.color
+    notConfirmed = event.eventType.elementsEqual("notConfirmed")
+    if (notConfirmed){
+        color = stripesColors![1]
+    }
+    videocall = event.videocall
+    if videocall {
+        widthVideoCall.constant = 20
+        marginLeftText.constant = 4
+    }else{
+        widthVideoCall.constant = 0
+        marginLeftText.constant = 0
+    }
     setNeedsDisplay()
     setNeedsLayout()
   }
@@ -154,16 +179,52 @@ open class EventView: UIView {
     context?.addLine(to: CGPoint(x: x , y: (bounds).height - 1))
     context?.addLine(to: CGPoint(x: x + rect.size.width, y: (bounds).height - 1 ))
     context?.strokePath()
+    
+    if notConfirmed {
+       let stripeWidth: CGFloat = 20.0 // whatever you want
+        let m = stripeWidth / 2.0
+
+        guard let c = UIGraphicsGetCurrentContext() else { return }
+        c.setLineWidth(stripeWidth)
+
+        let r = CGRect(x: x, y: y, width: width, height: height)
+        let longerSide = width > height ? width : height
+
+        c.saveGState()
+        c.clip(to: r)
+
+            var p = x - longerSide
+            while p <= x + width {
+
+                c.setStrokeColor(stripesColors![0].cgColor)
+                c.move( to: CGPoint(x: p-m, y: y-m) )
+                c.addLine( to: CGPoint(x: p+m+height, y: y+m+height) )
+                c.strokePath()
+
+                p += stripeWidth
+
+                c.setStrokeColor(stripesColors![1].cgColor)
+                c.move( to: CGPoint(x: p-m, y: y-m) )
+                c.addLine( to: CGPoint(x: p+m+height, y: y+m+height) )
+                c.strokePath()
+
+                p += stripeWidth
+            }
+    }
+    
+    
     context?.restoreGState()
   }
 
   override open func layoutSubviews() {
     super.layoutSubviews()
-    textView.fillSuperview(left: 0, right: 5, top: 0, bottom: 0)
-    if(fConsultation){
-        imageView.anchorInCorner(.topRight, xPad: 0, yPad: 0, width: 22, height: 22)
-    }else{
-        imageView.anchorInCorner(.topRight, xPad: 0, yPad: 0, width: 20, height: 20)
-    }
+
+    
+//    textView.fillSuperview(left: 0, right: 0, top: 0, bottom: 0)
+//    if(fConsultation){
+//        imageView.anchorInCorner(.topRight, xPad: 0, yPad: 0, width: 22, height: 22)
+//    }else{
+//        imageView.anchorInCorner(.topRight, xPad: 0, yPad: 0, width: 20, height: 20)
+//    }
   }
 }
