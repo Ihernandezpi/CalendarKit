@@ -80,7 +80,12 @@ public class DayView: UIView {
     addSubview(timelinePagerView)
     addSubview(dayHeaderView)
     timelinePagerView.delegate = self
-    self.backgroundColor = UIColor.white
+    if #available(iOS 13.0, *) {
+        self.backgroundColor = .systemBackground
+    } else {
+        self.backgroundColor = UIColor.white
+    }
+    
     if state == nil {
       state = DayViewState()
     }
@@ -110,7 +115,7 @@ public class DayView: UIView {
 
   override public func layoutSubviews() {
     super.layoutSubviews()
-    dayHeaderView.anchorAndFillEdge(.top, xPad: 0, yPad: 0, otherSize: headerHeight)
+    dayHeaderView.anchorAndFillEdge(.top, xPad: 0, yPad: 40, otherSize: headerHeight)
     timelinePagerView.alignAndFill(align: .underCentered, relativeTo: dayHeaderView, padding: 0)
   }
 
