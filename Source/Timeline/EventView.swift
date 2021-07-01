@@ -150,6 +150,14 @@ open class EventView: UIView {
         widthVideoCall.constant = 0
         marginLeftText.constant = 0
     }
+    if event.status.elementsEqual("canceled"){
+        if var title = textView.text{
+            var newTitle = NSAttributedString(string: title, attributes: [.strikethroughStyle: 2, .font: UIFont.boldSystemFont(ofSize: 12), .foregroundColor: UIColor.white])
+            textView.attributedText = newTitle
+        }
+    }else{
+        
+    }
     setNeedsDisplay()
     setNeedsLayout()
   }
