@@ -44,10 +44,17 @@ open class EventView: UIView {
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
-  lazy var imageView : UIImageView = {
-        var imageView = UIImageView.init();
-    imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView;
+//  lazy var imageView : UIImageView = {
+//        var imageView = UIImageView.init();
+//    imageView.translatesAutoresizingMaskIntoConstraints = false
+//        return imageView;
+//    }()
+    lazy var eventyTypeText : UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.boldSystemFont(ofSize: 10)
+        label.textAlignment = .right
+        return label
     }()
     lazy var videoCallImage : UIImageView = {
         let imageView = UIImageView(image: #imageLiteral(resourceName: "baseline_videocam_black_24pt"))
@@ -76,7 +83,7 @@ open class EventView: UIView {
 
     color = tintColor
     addSubview(textView)
-    addSubview(imageView)
+    addSubview(eventyTypeText)
     addSubview(videoCallImage)
     
     self.videoCallImage.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
@@ -85,15 +92,15 @@ open class EventView: UIView {
     widthVideoCall.isActive = true
     self.videoCallImage.heightAnchor.constraint(equalToConstant: 20).isActive = true
     
-    self.imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
-    self.imageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -4).isActive = true
-    self.imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-    self.imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+    self.eventyTypeText.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
+    self.eventyTypeText.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -4).isActive = true
+    self.eventyTypeText.widthAnchor.constraint(equalToConstant: 50).isActive = true
+    self.eventyTypeText.heightAnchor.constraint(equalToConstant: 20).isActive = true
     
     self.textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
     marginLeftText = self.textView.leftAnchor.constraint(equalTo: self.videoCallImage.rightAnchor, constant: 4)
     marginLeftText.isActive = true
-    self.textView.rightAnchor.constraint(equalTo: self.imageView.leftAnchor, constant: 4).isActive = true
+    self.textView.rightAnchor.constraint(equalTo: self.eventyTypeText.leftAnchor, constant: 4).isActive = true
     self.textView.heightAnchor.constraint(equalToConstant: 30).isActive = true
     
     }
@@ -108,30 +115,37 @@ open class EventView: UIView {
     }
     if(event.eventType.elementsEqual("fconsultation")){
         fConsultation = true
-        var image = UIImage.init(named: "btn_primeraVez")!;
-        imageView.image = image
+//        var image = UIImage.init(named: "btn_primeraVez")!;
+//        imageView.image = image
+        eventyTypeText.text = "1ra. Vez"
     }else if(event.eventType.elementsEqual("consultation")){
         fConsultation = false
-        var image = UIImage.init(named: "btn_Sub")!;
-        imageView.image = image
+//        var image = UIImage.init(named: "btn_Sub")!;
+//        imageView.image = image
+        eventyTypeText.text = "Sub"
     }else if(event.eventType.elementsEqual("surgery")){
         fConsultation = false
-        var image = UIImage.init(named: "btn_Circ")!;
-        imageView.image = image
+//        var image = UIImage.init(named: "btn_Circ")!;
+//        imageView.image = image
+        eventyTypeText.text = "Cir"
+    }else if(event.eventType.elementsEqual("recurrent")){
+        fConsultation = false
+//        var image = UIImage.init(named: "btn_Rec")!;
+//        imageView.image = image
+        eventyTypeText.text = "Evt. Rec"
     }else if(event.eventType.elementsEqual("personal")){
         fConsultation = false
-
-        imageView.image = nil
+        eventyTypeText.text = ""
     }
     else if(event.eventType.elementsEqual("vacation")){
         fConsultation = false
-        imageView.image = nil
+        eventyTypeText.text = ""
     }
     else if(event.eventType.elementsEqual("congress")){
         fConsultation = false
-        imageView.image = nil
+        eventyTypeText.text = ""
     }else{
-        imageView.image = nil
+        eventyTypeText.text = ""
         fConsultation = false
     }
     stripesColors = event.stripesColors
