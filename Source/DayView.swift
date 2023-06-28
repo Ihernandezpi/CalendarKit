@@ -48,7 +48,7 @@ public class DayView: UIView {
     }
   }
 
-  let dayHeaderView = DayHeaderView()
+  public let dayHeaderView = DayHeaderView()
   public let timelinePagerView = TimelinePagerView()
 
   public var state: DayViewState? {
@@ -77,6 +77,7 @@ public class DayView: UIView {
   }
 
   func configure() {
+      NSTimeZone.default = NSTimeZone(name: "America/Mexico_City") as! TimeZone
     addSubview(timelinePagerView)
     addSubview(dayHeaderView)
     timelinePagerView.delegate = self

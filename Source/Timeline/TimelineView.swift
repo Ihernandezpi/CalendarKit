@@ -33,7 +33,7 @@ public class TimelineView: UIView, ReusableView {
   }
 
   var currentTime: Date {
-    return Date()
+      return Date().convertToLocalTime(fromTimeZone: "America/Mexico_City")!
   }
     
   var eventViews = [EventView]()
@@ -184,16 +184,18 @@ public class TimelineView: UIView, ReusableView {
         formater.dateFormat = "hh a"
         formater.amSymbol = "AM"
         formater.pmSymbol = "PM"
-        if let dateTime = formater.date(from: time){
-            for case String(format:"%d",dateTime.hour) in dayBlockHours {
+//        if let dateTime = formater.date(from: time){
+            let dateString = String(format:"%d",i)
+        print(dayBlockHours)
+            for case dateString in dayBlockHours {
                 context?.addRect(CGRect(x: x, y: y, width: (bounds).width, height: verticalDiff))
                 context?.setFillColor(UIColor(red:0.50, green:0.58, blue:0.60, alpha:0.5).cgColor)
                 context?.setLineWidth(1)
                 context?.fillPath();
             }
-        }
+//        }
         
-      if i == hourToRemoveIndex { continue }
+      //if i == hourToRemoveIndex { continue }
         
       let fontSize = style.font.pointSize
       let timeRect = CGRect(x: 2, y: iFloat * verticalDiff + verticalInset - 7,
@@ -223,6 +225,7 @@ public class TimelineView: UIView, ReusableView {
       nowLine.date = currentTime
       nowLine.frame = rect
       nowLine.center.y = dateToY(currentTime)
+        nowLine.alpha = 0 /// Esta línea desaparece la hora actual... está bugueada mejor la quitamos 28 marzo 2023
     }
   }
 
