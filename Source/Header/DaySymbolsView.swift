@@ -1,6 +1,6 @@
 import UIKit
 
-class DaySymbolsView: UIView {
+public class DaySymbolsView: UIView {
 
   var daysInWeek = 7
   var calendar = Calendar.autoupdatingCurrent
@@ -53,7 +53,7 @@ class DaySymbolsView: UIView {
   }
 
 
-  override func layoutSubviews() {
+    public override func layoutSubviews() {
     let labelsCount = CGFloat(labels.count)
 
     var per = bounds.width - bounds.height * labelsCount
