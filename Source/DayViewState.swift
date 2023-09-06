@@ -11,6 +11,7 @@ public class DayViewState {
 
   public init(date: Date = Date()) {
     let date = date.dateOnly()
+    //Date().convertToLocalTime(fromTimeZone: "America/Mexico_City")!
     self.selectedDate = date
   }
 

@@ -13,7 +13,12 @@ class SwipeLabelView: UIView {
     }
     didSet {
       state?.subscribe(client: self)
-      labels.first!.text = state?.selectedDate.format(with: .full)
+        if let timeZone = TimeZone(identifier: "America/Mexico_City"){
+            labels.first!.text = state?.selectedDate.format(with: .full, timeZone: timeZone)
+        }else{
+            labels.first!.text = state?.selectedDate.format(with: .full)
+        }
+      
     }
   }
 
@@ -92,7 +97,11 @@ extension SwipeLabelView: DayViewStateUpdating {
   func move(from oldDate: Date, to newDate: Date) {
     guard newDate != oldDate
       else { return }
-    labels.last!.text = newDate.format(with: .full)
+      if let timeZone = TimeZone(identifier: "America/Mexico_City"){
+          labels.last!.text = newDate.format(with: .full, timeZone: timeZone)
+      }else{
+          labels.last!.text = newDate.format(with: .full)
+      }
     let direction: AnimationDirection = newDate.isLater(than: oldDate) ? .Forward : .Backward
     animate(direction)
   }
